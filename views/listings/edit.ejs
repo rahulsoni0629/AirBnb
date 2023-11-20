@@ -1,0 +1,43 @@
+<%-layout("/layouts/boilerplate")%>
+<body>
+    <div class="row mt-3">
+        <div class="col-8 offset-2">
+            <h3>EditListing</h3>
+            <form method="post" action="/listings/<%=listing._id%>?_method=PUT" novalidate class="needs-validation">
+                <div class="mb-3 position-relative">
+                    <label for="title" class="form-label">Title</label>
+                    <input required id=""title class="form-control" type="text" value="<%=listing.title%>"  name="Listing[title]">
+                    <div class="invalid-tooltip">Title is required.</div>
+                </div>
+                <div class="mb-3">
+                    <label for="description" class="form-label">Description</label>
+                    <textarea id="description" name="Listing[description]" class="form-control"><%=listing.description%></textarea>
+                </div>
+                <div class="md-3">
+                    <label for="image" class="form-label">Image URL</label>
+                    <input required id="image"type="text" name="Listing[image]" class="form-control" value="<%=listing.image%>"><br><br>
+        
+                </div>
+                <div class="row">
+                    <div class="md-3 col-md-4">
+                        <label for="price" class="form-label">Price</label>
+                        <input required id="price" class="form-control" type="number" name="Listing[price]" value="<%=listing.price%>">
+            
+                    </div>
+                    <div class="md-3  col-md-8 class position-relative">
+                        <label for="country" class="form-label">Country</label>
+                        <input required id="country" class="form-control" type="text" name="Listing[country]" value="<%=listing.country%>">
+                        <div class="valid-tooltip">Looks good!</div>     
+                    </div>
+                </div>
+                <div class="md-3">
+                    <label for="location" class="form-label"></label>
+                    <input required id="location" class="form-control" type="text" name="Listing[location]" value="<%=listing.location%>">
+                </div>
+                <button type="submit" class="btn btn-dark edit-btn mt-3">Submit</button><br><br><br>
+            </form> 
+        </div>
+    </div>
+    
+</body>
+ 
