@@ -34,6 +34,7 @@ router.get("/about",(req, res) => {
 //Contact Route
 router.get("/contact",(req, res) => {
     res.render("listings/contact.ejs");
+
 });
 
 //Show Route
@@ -47,6 +48,7 @@ router.get("/:id", wrapAsync(async (req, res, next) => {
 router.post("/", wrapAsync(async (req,res,next)=>{ //validateListing is missing or removed
     const newListing = new Listing(req.body.Listing);
     await newListing.save();
+    req.flash("success","New Listing is Created !");
     res.redirect("/listings");
 }));
 
@@ -61,6 +63,7 @@ router.get("/:id/edit", wrapAsync(async (req, res,next) => {
 router.delete("/:id",wrapAsync( async (req,res,next)=>{
     let {id} = req.params; 
     let deletedListing = await Listing.findByIdAndDelete(id);
+    req.flash("success","Listing Deleted!");
     res.redirect("/listings");
 }));
 
@@ -74,6 +77,7 @@ router.put("/:id", wrapAsync(async (req, res,next) => { //validateListing is mis
     let { id } = req.params;
     const { title, description, image, price, country, location } = req.body.Listing;
     await Listing.findByIdAndUpdate(id, {title,description,image,price,country,location});
+    req.flash("success","Listing Updated !");
     res.redirect(`/listings/${id}`);
 }));
 
