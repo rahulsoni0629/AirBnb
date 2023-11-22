@@ -2,19 +2,8 @@ const express = require("express");
 const router = express.Router();
 const Listing = require("../models/listing.js");
 const wrapAsync = require("../utils/wrapAsync.js");
-const ExpressError = require("../utils/ExpressError.js");
-const {listingSchema}= require("../schema.js");
-const {isLoggedIn} = require("../middleware.js");
-
-const validateListing = (req,res,next)=>{
-    let {error} = listingSchema.validate(req.body);
-    if(error){
-        let errorMsg = error.details.map((el)=>el.message).join(",");
-        throw new ExpressError(400,errorMsg);
-    }else{
-        next();
-    }
-};
+const {isLoggedIn,isOwner,validateListing} = require("../middleware.js");
+const { isValidObjectId } = require("mongoose");
 
 //Index Route
 router.get("/", wrapAsync(async (req,res)=>{
@@ -59,14 +48,14 @@ router.post("/", isLoggedIn, wrapAsync(async (req,res,next)=>{ //validateListing
 }));
 
 //Edit Route
-router.get("/:id/edit", isLoggedIn, wrapAsync(async (req, res,next) => {
+router.get("/:id/edit",isOwner, isLoggedIn, wrapAsync(async (req, res,next) => {
     let { id } = req.params;
     const listing = await Listing.findById(id);
     res.render("listings/edit.ejs", { listing });
 }));
 
 //Delete Route
-router.delete("/:id", isLoggedIn,wrapAsync( async (req,res,next)=>{
+router.delete("/:id",isOwner, isLoggedIn,wrapAsync( async (req,res,next)=>{
     let {id} = req.params; 
     let deletedListing = await Listing.findByIdAndDelete(id);
     req.flash("success","Listing Deleted!");
@@ -74,15 +63,12 @@ router.delete("/:id", isLoggedIn,wrapAsync( async (req,res,next)=>{
 }));
 
 //Update Route
-router.put("/:id", wrapAsync(async (req, res,next) => { //validateListing is missing or removed 
-    // app.put("/listings/:id", async (req, res) => {
-    // let { id } = req.params;
-    // await Listing.findByIdAndUpdate(id, { ...req.body.listing });
-    // res.redirect(`/listings/${id}`);
-    // });
+//isValidated is not working 
+router.put("/:id", isOwner,isLoggedIn,wrapAsync(async (req, res) => { //validateListing is missing or removed 
     let { id } = req.params;
-    const { title, description, image, price, country, location } = req.body.Listing;
-    await Listing.findByIdAndUpdate(id, {title,description,image,price,country,location});
+    // const { title, description, image, price, country, location } = req.body.Listing;
+    // await Listing.findByIdAndUpdate(id, {title,description,image,price,country,location});
+    await Listing.findByIdAndUpdate(id, { ...req.body.Listing });
     req.flash("success","Listing Updated !");
     res.redirect(`/listings/${id}`);
 }));
