@@ -5,6 +5,10 @@ const wrapAsync = require("../utils/wrapAsync.js");
 const {isLoggedIn,isOwner,validateListing} = require("../middleware.js");
 const { isValidObjectId } = require("mongoose");
 
+router.get("/home",(req,res)=>{
+    res.render("listings/home.ejs")
+});
+
 //Index Route
 router.get("/", wrapAsync(async (req,res)=>{
     const allListings = await Listing.find({});

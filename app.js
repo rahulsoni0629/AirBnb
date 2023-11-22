@@ -47,9 +47,9 @@ const sessionOptions={
     },
 };
 
-app.get("/",(req,res)=>{
-    res.send("app working perfectly i am root");
-});
+// app.get("/",(req,res)=>{
+//     res.send("working ");
+// });
 
 app.use(session(sessionOptions));
 app.use(flash());//must before routes
@@ -61,6 +61,7 @@ passport.use(new LocalStrategy(User.authenticate()));
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
+//locals
 app.use((req,res,next)=>{
     res.locals.success = req.flash("success")
     res.locals.error = req.flash("error")
@@ -68,22 +69,13 @@ app.use((req,res,next)=>{
     next();
 })
 
-// app.get("/demo", async(req,res)=>{
-//     let fakeUser = new User({
-//         email:"rahulmehulsoni@gmail.com",
-//         username: "rsoni29"
-//     });
-//     let regUser = await User.register(fakeUser,"soni20573");
-//     res.send(regUser);
-// });
- 
-
+// differennt routs are created in routers folder
 app.use("/listings", listingRouter);
 app.use("/listings/:id/reviews", reviewRouter);
 app.use("/", userRouter);
 
 
-//Unknown Route error
+//Unknown Route address error
 app.all("*", (req,res,next)=>{
     next(new ExpressError(404,"Page Not Found!"));
 });
@@ -94,6 +86,7 @@ app.use((err,req,res,next) => {
     res.status(status).render("listings/error.ejs",{message});
 })
 
+//listen
 app.listen(8080,()=>{
     console.log("listening 8080");
 });
