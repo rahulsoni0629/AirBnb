@@ -4,77 +4,40 @@ const Listing = require("../models/listing.js");
 const wrapAsync = require("../utils/wrapAsync.js");
 const {isLoggedIn,isOwner,validateListing} = require("../middleware.js");
 const { isValidObjectId } = require("mongoose");
+const listingController = require("../controllers/listings.js");
+const multer  = require('multer')
+const upload = multer({ dest: 'uploads/' })
 
-router.get("/home",(req,res)=>{
-    res.render("listings/home.ejs")
+
+router
+.route("/")
+.get(wrapAsync(listingController.index)) //Index Route
+// .post(isLoggedIn, wrapAsync(listingController.create)); //Create Route---validateListing is not working
+.post("/", upload.single('Listing[image]'), (req, res) => { //Listing[image]==name in input
+    res.send(req.file);
 });
 
-//Index Route
-router.get("/", wrapAsync(async (req,res)=>{
-    const allListings = await Listing.find({});
-    res.render("listings/index.ejs", {allListings});  
-}));
+
+//home
+router.get("/home",listingController.home);
 
 //New Route
-router.get("/new",isLoggedIn,(req,res) => {
-    res.render("listings/new.ejs");
-});
+router.get("/new", isLoggedIn , listingController.new);
 
 //About Route
-router.get("/about",(req, res) => {
-    res.render("listings/about.ejs");
-});
+router.get("/about", listingController.about);
 
 //Contact Route
-router.get("/contact",(req, res) => {
-    res.render("listings/contact.ejs");
+router.get("/contact", listingController.contact);
 
-});
-
-//Show Route
-router.get("/:id", wrapAsync(async (req, res, next) => {
-    let { id } = req.params;
-    const listing = await Listing.findById(id).populate({path:"reviews",populate:{path:"author",},}).populate("owner");
-    if(!listing){
-        req.flash("error","Listing not exist !")
-        res.redirect("/listings");
-    }
-    res.render("listings/show.ejs", { listing });
-}));
-
-//Create Route
-router.post("/", isLoggedIn, wrapAsync(async (req,res,next)=>{ //validateListing is missing or removed
-    const newListing = new Listing(req.body.Listing);
-    newListing.owner = req.user._id;
-    await newListing.save();
-    req.flash("success","New Listing is Created !");
-    res.redirect("/listings");
-}));
+router
+.route("/:id")
+.get(wrapAsync(listingController.show)) //show
+.delete(isOwner, isLoggedIn,wrapAsync( listingController.delete))//delete
+.put(isOwner,isLoggedIn,wrapAsync(listingController.update));//update---validationListing is not working
 
 //Edit Route
-router.get("/:id/edit",isOwner, isLoggedIn, wrapAsync(async (req, res,next) => {
-    let { id } = req.params;
-    const listing = await Listing.findById(id);
-    res.render("listings/edit.ejs", { listing });
-}));
+router.get("/:id/edit",isOwner, isLoggedIn, wrapAsync(listingController.edit));
 
-//Delete Route
-router.delete("/:id",isOwner, isLoggedIn,wrapAsync( async (req,res,next)=>{
-    let {id} = req.params; 
-    let deletedListing = await Listing.findByIdAndDelete(id);
-    req.flash("success","Listing Deleted!");
-    res.redirect("/listings");
-}));
-
-//Update Route
-//isValidated is not working 
-router.put("/:id", isOwner,isLoggedIn,wrapAsync(async (req, res) => { //validateListing is missing or removed 
-    let { id } = req.params;
-    // const { title, description, image, price, country, location } = req.body.Listing;
-    // await Listing.findByIdAndUpdate(id, {title,description,image,price,country,location});
-    await Listing.findByIdAndUpdate(id, { ...req.body.Listing });
-    req.flash("success","Listing Updated !");
-    res.redirect(`/listings/${id}`);
-}));
 
 module.exports = router;
