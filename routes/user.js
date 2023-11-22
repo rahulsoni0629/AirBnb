@@ -26,7 +26,7 @@ router.get("/login", (req,res) => {
     res.render("users/login.ejs")
 });
 
-router.post("/login", passport.authenticate("local",{failureRedirect: "/login", failureFlash:true}), async(req,res) => {
+router.post("/login", passport.authenticate("local", {failureRedirect: "/login", failureFlash:true}), async(req,res) => {
     req.flash("success","Welcome back to WanderLust");
     res.redirect("/listings");
 });
