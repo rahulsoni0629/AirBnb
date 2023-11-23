@@ -21,6 +21,10 @@ module.exports.contact = (req, res) => {
     res.render("listings/contact.ejs");
 };
 
+module.exports.submit_contact = (req,res)=>{
+    res.render("listings/submit_contact.ejs")
+};
+
 module.exports.show = async (req, res, next) => {
     let { id } = req.params;
     const listing = await Listing.findById(id).populate({path:"reviews",populate:{path:"author",},}).populate("owner");
