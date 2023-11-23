@@ -28,20 +28,29 @@ module.exports.show = async (req, res, next) => {
         req.flash("error","Listing not exist !")
         res.redirect("/listings");
     }
-    res.render("listings/show.ejs", { listing });
+    res.render("listings/show.ejs", { listing});
 };
 module.exports.create = async (req,res,next) => { 
+    let url = req.file.path;
+    let filename = req.file.filename;
     const newListing = new Listing(req.body.Listing);
     newListing.owner = req.user._id;
+    newListing.image = {url,filename};
     await newListing.save();
     req.flash("success","New Listing is Created !");
     res.redirect("/listings");
 };
 
-module.exports.edit = async (req, res,next) => {
+module.exports.edit = async (req, res) => {
     let { id } = req.params;
     const listing = await Listing.findById(id);
-    res.render("listings/edit.ejs", { listing });
+    if(!listing){
+        req.flash("error","Listing not exist !")
+        res.redirect("/listings");
+    }
+    let originalImgUrl = listing.image.url;
+    originalImgUrl = originalImgUrl.replace("upload/", "upload/w_250/");
+    res.render("listings/edit.ejs", { listing , originalImgUrl});
 };
 module.exports.delete = async (req,res,next)=>{
     let {id} = req.params; 
@@ -54,7 +63,13 @@ module.exports.update = async (req, res) => { //validateListing is missing or re
     let { id } = req.params;
     // const { title, description, image, price, country, location } = req.body.Listing;
     // await Listing.findByIdAndUpdate(id, {title,description,image,price,country,location});
-    await Listing.findByIdAndUpdate(id, { ...req.body.Listing });
+    let listing = await Listing.findByIdAndUpdate(id, { ...req.body.Listing });
+    if(typeof req.file !== "undefined"){
+        let url = req.file.path;
+        let filename = req.file.filename;
+        listing.image = {url,filename};
+        await listing.save();
+    }
     req.flash("success","Listing Updated !");
     res.redirect(`/listings/${id}`);
 };

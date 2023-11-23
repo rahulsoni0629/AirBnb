@@ -6,16 +6,15 @@ const {isLoggedIn,isOwner,validateListing} = require("../middleware.js");
 const { isValidObjectId } = require("mongoose");
 const listingController = require("../controllers/listings.js");
 const multer  = require('multer')
-const upload = multer({ dest: 'uploads/' })
+const {storage} = require("../cloudConfig.js")
+const upload = multer({storage})
+
 
 
 router
 .route("/")
 .get(wrapAsync(listingController.index)) //Index Route
-// .post(isLoggedIn, wrapAsync(listingController.create)); //Create Route---validateListing is not working
-.post("/", upload.single('Listing[image]'), (req, res) => { //Listing[image]==name in input
-    res.send(req.file);
-});
+.post(isLoggedIn,upload.single('Listing[image]'), wrapAsync(listingController.create)); //Create Route---validateListing is not working
 
 
 //home
@@ -34,7 +33,7 @@ router
 .route("/:id")
 .get(wrapAsync(listingController.show)) //show
 .delete(isOwner, isLoggedIn,wrapAsync( listingController.delete))//delete
-.put(isOwner,isLoggedIn,wrapAsync(listingController.update));//update---validationListing is not working
+.put(isLoggedIn,isOwner,upload.single('Listing[image]'),wrapAsync(listingController.update));//update---validationListing is not working
 
 //Edit Route
 router.get("/:id/edit",isOwner, isLoggedIn, wrapAsync(listingController.edit));
