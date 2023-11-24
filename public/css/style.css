@@ -81,3 +81,10 @@ body{
 .btns{
     display: flex;
 }
+
+
+
+#map{
+    height: 300px;
+    width: 640px;
+}
