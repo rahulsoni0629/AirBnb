@@ -1,7 +1,27 @@
+<style>
+  .search-btn{
+    color: white;
+    background-color: #fe424d;
+    border-radius: 20px;
+    
+  }
+  .search-btn:hover{
+    color: white;
+    background-color: #fe424d;
+  }
+  .search-inp{
+    border-radius: 25px;
+    font-size: 1 rem;
+  }
+</style>
+
+
+
+
 <nav class="navbar navbar-expand-md bg-body-light border-bottom sticky-top">
     <div class="container-fluid">
 
-      <a class="navbar-brand" href="/"><i class="fa-regular fa-compass fa-2xl"></i></a>
+      <a class="navbar-brand" href="/listings/home"><i class="fa-regular fa-compass fa-2xl"></i></a>
 
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup">
         <span class="navbar-toggler-icon"></span>
@@ -10,19 +30,25 @@
       <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
         <div class="navbar-nav">
           <a class="nav-link" aria-current="page" href="/listings/home">Home</a>
-          <a class="nav-link" href="/listings">All Listings</a>
-          <a class="nav-link" href="/listings/new">Add new Listing</a>
-          <a class="nav-link" href="/listings/about">About Us</a>
-          <a class="nav-link" href="/listings/contact">Contact Us</a>
+          <a class="nav-link" href="/listings">Explore</a>
+          <a class="nav-link" href="/listings/new">List your home</a>
+          
+        </div>
+        <div class="navbar-nav ms-auto">
+          <form class="d-flex" role="search">
+            <input class="form-control me-2 search-inp" type="search" placeholder="Search Destination">
+            <button class="btn search-btn" type="submit"><i class="fa-solid fa-magnifying-glass"></i></button>
+          </form>
         </div>
         <div class="navbar-nav ms-auto">
           <% if(!currUser) { %>
-          <a class="nav-link" aria-current="page" href="/signup">Sign Up</a>
-          <a class="nav-link" href="/login">Login</a>
+          <a class="nav-link" aria-current="page" href="/signup"><b>Sign Up</b></a>
+          <a class="nav-link" href="/login"><b>Login</b></a>
           <% }%>
           <% if(currUser) { %>
-          <a class="nav-link" href="/logout">Logout</a>
+          <a class="nav-link" href="/logout"><b>Logout</b></a>
           <% } %>
+          <a class="nav-link" href="/listings/contact">Contact Us</a>
         </div>
       </div>
     </div>

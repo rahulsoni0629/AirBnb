@@ -16,10 +16,6 @@ module.exports.new = (req,res) => {
     res.render("listings/new.ejs");
 };
 
-module.exports.about = (req, res) => {
-    res.render("listings/about.ejs");
-};
-
 module.exports.contact = (req, res) => {
     res.render("listings/contact.ejs");
 };

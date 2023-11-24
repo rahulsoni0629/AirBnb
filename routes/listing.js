@@ -23,9 +23,6 @@ router.get("/home",listingController.home);
 //New Route
 router.get("/new", isLoggedIn , listingController.new);
 
-//About Route
-router.get("/about", listingController.about);
-
 //after contact form fill 
 router.get("/submit_contact",listingController.submit_contact);
 
